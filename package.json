@@ -1,0 +1,24 @@
+{
+  "name": "figure-generator",
+  "version": "1.0.0",
+  "description": "AI-powered figure art generator",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'No build needed'",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "vercel": "^32.0.0"
+  },
+  "keywords": [
+    "figure",
+    "generator",
+    "ai",
+    "image",
+    "converter"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}
