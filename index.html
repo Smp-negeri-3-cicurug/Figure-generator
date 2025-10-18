@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Figure Generator - Konversi Gambar AI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <canvas id="particles"></canvas>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon"></span>
+                <h1>Figure Generator</h1>
+            </div>
+            <p class="subtitle">Ubah gambar Anda menjadi seni figure yang menakjubkan</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Upload Area -->
+            <div class="upload-section">
+                <div class="upload-box" id="uploadBox">
+                    <input type="file" id="fileInput" accept="image/*" hidden>
+                    <div class="upload-content" id="uploadContent">
+                        <div class="upload-icon"></div>
+                        <h3>Letakkan gambar Anda di sini</h3>
+                        <p>atau klik untuk memilih file</p>
+                        <span class="file-format">Mendukung: JPG, PNG, WEBP</span>
+                    </div>
+                    <div class="preview-container" id="previewContainer" style="display: none;">
+                        <img id="previewImage" src="" alt="Preview">
+                        <button class="remove-btn" id="removeBtn">✕</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Generate Button -->
+            <div class="action-section">
+                <button class="generate-btn" id="generateBtn" disabled>
+                    <span class="btn-text">Generate</span>
+                    <span class="btn-loader" style="display: none;">
+                        <span class="loader"></span>
+                        Memproses...
+                    </span>
+                </button>
+            </div>
+
+            <!-- Result Section -->
+            <div class="result-section" id="resultSection" style="display: none;">
+                <h2 class="result-title">Seni Figure Anda</h2>
+                <div class="result-box">
+                    <img id="resultImage" src="" alt="Result">
+                    <div class="result-actions">
+                        <button class="download-btn" id="downloadBtn">
+                            Unduh
+                        </button>
+                        <button class="new-btn" id="newBtn">
+                            Gambar Baru
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- How to Use Section -->
+        <section class="how-to-use">
+            <h2 class="section-title">Cara Penggunaan</h2>
+            <div class="steps-container">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h3>Upload Gambar</h3>
+                    <p>Pilih atau drag & drop gambar yang ingin diubah menjadi figure art</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h3>Klik Generate</h3>
+                    <p>Tekan tombol "Buat Figure" dan tunggu proses konversi selesai</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h3>Download Hasil</h3>
+                    <p>Simpan gambar figure art Anda dengan klik tombol "Unduh"</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Created by Ditzz with Claude</p>
+        </footer>
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+            <div class="loading-card">
+                <div class="loading-spinner"></div>
+                <h3>Membuat seni figure Anda...</h3>
+                <p>Mohon tunggu sebentar</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
