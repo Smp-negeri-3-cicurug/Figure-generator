@@ -4,14 +4,12 @@ export const config = {
 };
 
 export default async function handler(req) {
-  // CORS headers
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
   };
 
-  // Handle OPTIONS request
   if (req.method === 'OPTIONS') {
     return new Response(null, {
       status: 204,
@@ -19,7 +17,6 @@ export default async function handler(req) {
     });
   }
 
-  // Only allow POST
   if (req.method !== 'POST') {
     return new Response(
       JSON.stringify({ error: 'Method not allowed' }),
@@ -31,7 +28,6 @@ export default async function handler(req) {
   }
 
   try {
-    // Parse form data
     const formData = await req.formData();
     const imageFile = formData.get('image');
 
@@ -45,13 +41,12 @@ export default async function handler(req) {
       );
     }
 
-    // Convert to buffer
+    // Convert to ArrayBuffer (works in Edge Runtime)
     const arrayBuffer = await imageFile.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
 
     // Step 1: Upload to tmpfiles.org
     const uploadFormData = new FormData();
-    const blob = new Blob([buffer], { type: imageFile.type });
+    const blob = new Blob([arrayBuffer], { type: imageFile.type });
     uploadFormData.append('file', blob, imageFile.name || 'image.jpg');
 
     const uploadResponse = await fetch('https://tmpfiles.org/api/v1/upload', {
@@ -103,7 +98,6 @@ export default async function handler(req) {
       throw new Error('API did not return a result');
     }
 
-    // Return success response
     return new Response(
       JSON.stringify({
         success: true,
@@ -129,4 +123,4 @@ export default async function handler(req) {
       }
     );
   }
-      }
+                                       }
