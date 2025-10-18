@@ -12,6 +12,9 @@
   "devDependencies": {
     "vercel": "^32.0.0"
   },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "keywords": [
     "figure",
     "generator",
