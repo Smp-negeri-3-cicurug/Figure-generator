@@ -214,12 +214,31 @@ async function generateFigure() {
 }
 
 function downloadResult() {
-    const link = document.createElement('a');
-    link.href = resultImage.src;
-    link.download = `figure_${Date.now()}.jpg`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // Fetch gambar sebagai blob terlebih dahulu
+    fetch(resultImage.src)
+        .then(response => response.blob())
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `figure_art_${Date.now()}.jpg`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        })
+        .catch(error => {
+            console.error('Download error:', error);
+            // Fallback: coba download langsung
+            const link = document.createElement('a');
+            link.href = resultImage.src;
+            link.download = `figure_art_${Date.now()}.jpg`;
+            link.target = '_blank';
+            link.setAttribute('crossorigin', 'anonymous');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
 }
 
 function resetApp() {
