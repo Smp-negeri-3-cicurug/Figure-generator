@@ -1,26 +1,19 @@
 {
-  "name": "figure-generator",
+  "name": "image-converter-edge",
   "version": "1.0.0",
-  "description": "AI-powered figure art generator",
-  "main": "index.html",
+  "description": "Edge runtime API for image conversion (tmpfiles.org + Nekolabs)",
   "scripts": {
     "dev": "vercel dev",
-    "build": "echo 'No build needed'",
     "deploy": "vercel --prod"
   },
-  "dependencies": {},
-  "devDependencies": {
-    "vercel": "^32.0.0"
-  },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=18"
   },
   "keywords": [
-    "figure",
-    "generator",
-    "ai",
-    "image",
-    "converter"
+    "edge-function",
+    "image-converter",
+    "vercel",
+    "api"
   ],
   "author": "Your Name",
   "license": "MIT"
