@@ -1,54 +1,55 @@
 // Configuration
-const API_ENDPOINT = '/api/generate'; // Ganti dengan URL API kamu setelah deploy
+const API_ENDPOINT = '/api/generate';
 
-// Wait for DOM to be fully loaded
-document.addEventListener('DOMContentLoaded', function() {
-    initializeApp();
-});
+// State
+let selectedFile = null;
+let canvas, ctx, particlesArray = [];
 
-function initializeApp() {
-    // Particles Animation
-    const canvas = document.getElementById('particles');
-    const ctx = canvas.getContext('2d');
-    let particlesArray = [];
-
+// Particles Animation Setup
+function setupParticles() {
+    canvas = document.getElementById('particles');
+    if (!canvas) return;
+    
+    ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    window.addEventListener('resize', () => {
+    window.addEventListener('resize', function() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         initParticles();
     });
 
     class Particle {
-    constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.size = Math.random() * 2 + 0.5;
-        this.speedX = Math.random() * 0.5 - 0.25;
-        this.speedY = Math.random() * 0.5 - 0.25;
-        this.opacity = Math.random() * 0.5 + 0.2;
-    }
-    
-    update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
+        constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.size = Math.random() * 2 + 0.5;
+            this.speedX = Math.random() * 0.5 - 0.25;
+            this.speedY = Math.random() * 0.5 - 0.25;
+            this.opacity = Math.random() * 0.5 + 0.2;
+        }
         
-        if (this.x > canvas.width) this.x = 0;
-        if (this.x < 0) this.x = canvas.width;
-        if (this.y > canvas.height) this.y = 0;
-        if (this.y < 0) this.y = canvas.height;
+        update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+            
+            if (this.x > canvas.width) this.x = 0;
+            if (this.x < 0) this.x = canvas.width;
+            if (this.y > canvas.height) this.y = 0;
+            if (this.y < 0) this.y = canvas.height;
+        }
+        
+        draw() {
+            ctx.fillStyle = 'rgba(99, 102, 241, ' + this.opacity + ')';
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+        }
     }
-    
-    draw() {
-        ctx.fillStyle = `rgba(99, 102, 241, ${this.opacity})`;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
-    }
-}
 
+    window.Particle = Particle;
+    
     function initParticles() {
         particlesArray = [];
         const numberOfParticles = (canvas.width * canvas.height) / 15000;
@@ -68,11 +69,14 @@ function initializeApp() {
 
     initParticles();
     animateParticles();
+}
 
-    // State
-    let selectedFile = null;
+// Main initialization
+document.addEventListener('DOMContentLoaded', function() {
+    // Setup particles
+    setupParticles();
 
-    // Elements
+    // Get elements
     const uploadBox = document.getElementById('uploadBox');
     const fileInput = document.getElementById('fileInput');
     const uploadContent = document.getElementById('uploadContent');
@@ -89,29 +93,47 @@ function initializeApp() {
     const loadingOverlay = document.getElementById('loadingOverlay');
 
     // Event Listeners
-    uploadBox.addEventListener('click', () => {
+    uploadBox.addEventListener('click', function() {
         if (!previewContainer.style.display || previewContainer.style.display === 'none') {
             fileInput.click();
         }
     });
 
-    fileInput.addEventListener('change', handleFileSelect);
-    removeBtn.addEventListener('click', removeImage);
-    generateBtn.addEventListener('click', generateFigure);
-    downloadBtn.addEventListener('click', downloadResult);
-    newBtn.addEventListener('click', resetApp);
+    fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            handleFile(file);
+        }
+    });
+
+    removeBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        removeImage();
+    });
+
+    generateBtn.addEventListener('click', function() {
+        generateFigure();
+    });
+
+    downloadBtn.addEventListener('click', function() {
+        downloadResult();
+    });
+
+    newBtn.addEventListener('click', function() {
+        resetApp();
+    });
 
     // Drag and Drop
-    uploadBox.addEventListener('dragover', (e) => {
+    uploadBox.addEventListener('dragover', function(e) {
         e.preventDefault();
         uploadBox.classList.add('dragover');
     });
 
-    uploadBox.addEventListener('dragleave', () => {
+    uploadBox.addEventListener('dragleave', function() {
         uploadBox.classList.remove('dragover');
     });
 
-    uploadBox.addEventListener('drop', (e) => {
+    uploadBox.addEventListener('drop', function(e) {
         e.preventDefault();
         uploadBox.classList.remove('dragover');
         
@@ -126,22 +148,22 @@ function initializeApp() {
         }
     });
 
-    // Functions
-    function handleFileSelect(e) {
-        const file = e.target.files[0];
-        if (file) {
-            handleFile(file);
-        }
-    }
+    // Prevent default drag behavior
+    document.addEventListener('dragover', function(e) {
+        e.preventDefault();
+    });
+    
+    document.addEventListener('drop', function(e) {
+        e.preventDefault();
+    });
 
+    // Functions
     function handleFile(file) {
-        // Validate file type
         if (!file.type.startsWith('image/')) {
             showError('Mohon pilih file gambar');
             return;
         }
 
-        // Validate file size (max 10MB)
         if (file.size > 10 * 1024 * 1024) {
             showError('Ukuran file harus kurang dari 10MB');
             return;
@@ -149,9 +171,8 @@ function initializeApp() {
 
         selectedFile = file;
 
-        // Show preview
         const reader = new FileReader();
-        reader.onload = (e) => {
+        reader.onload = function(e) {
             previewImage.src = e.target.result;
             uploadContent.style.display = 'none';
             previewContainer.style.display = 'block';
@@ -161,8 +182,7 @@ function initializeApp() {
         reader.readAsDataURL(file);
     }
 
-    function removeImage(e) {
-        e.stopPropagation();
+    function removeImage() {
         selectedFile = null;
         fileInput.value = '';
         previewImage.src = '';
@@ -175,17 +195,14 @@ function initializeApp() {
         if (!selectedFile) return;
 
         try {
-            // Show loading
             btnText.style.display = 'none';
             btnLoader.style.display = 'flex';
             generateBtn.disabled = true;
             loadingOverlay.style.display = 'flex';
 
-            // Create FormData
             const formData = new FormData();
             formData.append('image', selectedFile);
 
-            // Call API
             const response = await fetch(API_ENDPOINT, {
                 method: 'POST',
                 body: formData
@@ -198,12 +215,10 @@ function initializeApp() {
 
             const data = await response.json();
 
-            // Show result
             resultImage.src = data.result;
             resultSection.style.display = 'block';
             
-            // Scroll to result
-            setTimeout(() => {
+            setTimeout(function() {
                 resultSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }, 300);
 
@@ -211,7 +226,6 @@ function initializeApp() {
             console.error('Error:', error);
             showError(error.message || 'Gagal membuat figure. Silakan coba lagi.');
         } finally {
-            // Hide loading
             btnText.style.display = 'inline';
             btnLoader.style.display = 'none';
             generateBtn.disabled = false;
@@ -220,12 +234,11 @@ function initializeApp() {
     }
 
     function downloadResult() {
-        // Gunakan API download endpoint
-        const downloadUrl = `/api/download?url=${encodeURIComponent(resultImage.src)}`;
+        const downloadUrl = '/api/download?url=' + encodeURIComponent(resultImage.src);
         
         const link = document.createElement('a');
         link.href = downloadUrl;
-        link.download = `figure_art_${Date.now()}.jpg`;
+        link.download = 'figure_art_' + Date.now() + '.jpg';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -241,15 +254,10 @@ function initializeApp() {
         resultSection.style.display = 'none';
         generateBtn.disabled = true;
         
-        // Scroll to top
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function showError(message) {
         alert(message);
     }
-
-    // Prevent default drag behavior on document
-    document.addEventListener('dragover', (e) => e.preventDefault());
-    document.addEventListener('drop', (e) => e.preventDefault());
-        }
+});
