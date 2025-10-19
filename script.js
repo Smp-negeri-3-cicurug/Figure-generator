@@ -215,7 +215,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const data = await response.json();
 
-            resultImage.src = data.result;
+            // Gunakan proxy untuk load gambar hasil
+            const proxiedImageUrl = '/api/proxy-image?url=' + encodeURIComponent(data.result);
+            resultImage.src = proxiedImageUrl;
+            resultImage.dataset.originalUrl = data.result; // Simpan URL asli untuk download
             resultSection.style.display = 'block';
             
             setTimeout(function() {
@@ -234,7 +237,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function downloadResult() {
-        const downloadUrl = '/api/download?url=' + encodeURIComponent(resultImage.src);
+        // Ambil URL asli dari dataset, fallback ke src
+        const originalUrl = resultImage.dataset.originalUrl || resultImage.src;
+        const downloadUrl = '/api/download?url=' + encodeURIComponent(originalUrl);
         
         const link = document.createElement('a');
         link.href = downloadUrl;
